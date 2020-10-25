@@ -9,14 +9,27 @@ Twitter Help Center의 [How to Tweet](https://help.twitter.com/en/using-twitter/
 ## isOSX?
 
 ```javascript
-const UserAgent = require('UserAgent');
+const UserAgent = require("UserAgent");
 //...
-const isOSX = UserAgent.isPlatform('Mac OS X');
+const isOSX = UserAgent.isPlatform("Mac OS X");
 ```
+
 UserAgent 모듈은 어디에서 왔을까? 이것은 다시 페이스북이 자신들의 스크립트 파일을 패키징한 [fbjs](https://github.com/facebook/fbjs)에서 찾을 수 있는데, [UserAgent](https://github.com/facebook/fbjs/blob/master/packages/fbjs/src/useragent/UserAgent.js)는 정적 메소드 [isPlatform](https://github.com/facebook/fbjs/blob/master/packages/fbjs/src/useragent/UserAgent.js#L230)에서 [UserAgentData](https://github.com/facebook/fbjs/blob/master/packages/fbjs/src/__forks__/UserAgentData.js)를 사용하고, 드디어 우리는 최종 목적지 [UAParser.js](https://github.com/faisalman/ua-parser-js)에 다다른다.
 
 ## UAParser.js
 
 이 라이브러리가 `window.navigator.userAgent`를 통해 `Mac OS` 여부를 구분하는 부분은 코드 [756번째 줄](https://github.com/faisalman/ua-parser-js/blob/master/src/ua-parser.js#L756)에서 찾아볼 수 있다, 있는데, 우리는 클라이언트 앱이 구동되는 운영체제가 macOS인지 아닌지만이 중요하니까 UAParser.js를 그대로 사용하지 않아도 되지 않을까? (라이브러리는 전혀 모듈화가 되어있지 않고, 매개변수 레이아웃이나 자료형도 기술되어 있지 않다.)
 
-미래의 나에게 맡겨둔다, 안녕히.
+## isOSX(): boolean
+
+```typescript
+function isOSX(): boolean {
+  const {userAgent} = window.navigator;
+  return [
+    /(mac\sos\sx)\s?([\w\s\.]*)/i,
+    /(macintosh|mac(?=_powerpc)\s)/i,
+  ].some((pattern) => pattern.test(userAgent));
+}
+```
+
+해당 패턴만 발췌하였습니다, 버전 정보는 파싱하지 않습니다.
