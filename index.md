@@ -1,0 +1,1 @@
+- 2020-10-19 [throttle과 debounce](throttle과-debounce.md)
